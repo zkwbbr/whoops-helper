@@ -58,7 +58,7 @@ class HandlerTest extends TestCase
                 ->setHost($_ENV['ZWH_SMTP_HOST'])
                 ->setUser($_ENV['ZWH_SMTP_USER'])
                 ->setPass($_ENV['ZWH_SMTP_PASS'])
-                ->setPort($_ENV['ZWH_SMTP_PORT'])
+                ->setPort((int) $_ENV['ZWH_SMTP_PORT'])
                 ->setEncr($_ENV['ZWH_SMTP_ENCR'])
         ];
 

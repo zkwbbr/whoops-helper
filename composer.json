@@ -20,7 +20,7 @@
         "zkwbbr/utils": "^1.0",
         "filp/whoops": "^2.3",
         "php-pushover/php-pushover": "^1",
-        "metarush/email-fallback": "^3.0"
+        "metarush/email-fallback": "^4"
     },
     "require-dev": {
         "vlucas/phpdotenv": "^3",

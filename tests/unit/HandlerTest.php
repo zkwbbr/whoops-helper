@@ -30,10 +30,10 @@ class HandlerTest extends TestCase
 
     public function tearDown(): void
     {
-        $logs = Zkwbbr\Utils\FilesFromDirectory::x($this->logDir);
+        $logs = \Zkwbbr\Utils\FilesFromDirectory::x($this->logDir);
 
         foreach ($logs as $log)
-            unlink($this->logDir . $log);
+            \unlink($this->logDir . $log);
     }
 
     public function testInvokeActionOnEvent()

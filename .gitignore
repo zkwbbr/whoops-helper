@@ -8,3 +8,5 @@ resources/docker/
 nbproject/
 .phpunit.result.cache
 .env
+error_log
+tests/mycoverage

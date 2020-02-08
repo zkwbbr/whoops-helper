@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2.0.1 - 2020-02-08
+
+### Fixed
+
+- Fix minor discrepancy in the timezone of the logs.
+
 ## 2.0.0 - 2019-08-14
 
 ### Changed

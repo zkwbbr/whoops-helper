@@ -12,8 +12,10 @@ class Handler
     private $logDir; // must have trailing slash
     private $logTimeZone;
     private $errorHash;
-    private $date;
+    private $adjustedDateTime;
     private $events = [];
+    private $nowDateTime;
+
     const LOGGED_EVENT = 1;
 
     public function __construct(object $ex, string $logDir, string $logTimeZone)
@@ -21,7 +23,8 @@ class Handler
         $this->ex = $ex;
         $this->logDir = $logDir;
         $this->logTimeZone = $logTimeZone;
-        $this->date = Utils\AdjustedDateTimeByTimeZone::x('now', $this->logTimeZone, 'Y-m-d H:i:s T');
+        $this->nowDateTime = \date('Y-m-d H:i:s', \time());
+        $this->adjustedDateTime = Utils\AdjustedDateTimeByTimeZone::x($this->nowDateTime, $this->logTimeZone, 'Y-m-d H:i:s O');
 
         $this->setErrorHash();
 
@@ -55,7 +58,7 @@ class Handler
     {
         foreach ($this->events as $v)
             if ($v == $event)
-                $action->callback($this->ex, $this->getErrorHash(), $this->date);
+                $action->callback($this->ex, $this->getErrorHash(), $this->adjustedDateTime);
     }
 
     /**
@@ -66,9 +69,9 @@ class Handler
      */
     private function log(string $message): void
     {
-        $filename = Utils\FormattedDateTime::x($this->date, 'Y-m-d_H-i-s') . '__' . $this->getErrorHash() . '.log';
+        $filename = Utils\AdjustedDateTimeByTimeZone::x($this->nowDateTime, $this->logTimeZone, 'Y-m-d_H-i-s_O') . '__' . $this->getErrorHash() . '.log';
 
-        file_put_contents($this->logDir . $filename, $message);
+        \file_put_contents($this->logDir . $filename, $message);
     }
 
     /**
@@ -90,7 +93,7 @@ class Handler
      */
     private function getErrorMessage(): string
     {
-        $msg = '[' . $this->date . '] ' . $this->ex->getMessage() . ' on ' . $this->ex->getFile() . ' (' . $this->ex->getLine() . ')' . "\r\n\r\n" .
+        $msg = '[' . $this->adjustedDateTime . '] ' . $this->ex->getMessage() . ' on ' . $this->ex->getFile() . ' (' . $this->ex->getLine() . ')' . "\r\n\r\n" .
             '--------------------------------------------------' . "\r\n\r\n" .
             'Trace:' . "\r\n\r\n" .
             $this->ex->getTraceAsString() . "\r\n\r\n" .
@@ -98,7 +101,7 @@ class Handler
             '$_SERVER:' . "\r\n\r\n";
 
         foreach ($_SERVER as $k => $v)
-            if (!is_array($v))
+            if (!\is_array($v))
                 $msg .= $k . ' = ' . $v . "\r\n";
 
         return $msg;
@@ -111,7 +114,7 @@ class Handler
      */
     private function setErrorHash(): void
     {
-        $this->errorHash = crc32($this->ex->getMessage() . $this->ex->getFile() . $this->ex->getLine() . $this->ex->getTraceAsString());
+        $this->errorHash = \crc32($this->ex->getMessage() . $this->ex->getFile() . $this->ex->getLine() . $this->ex->getTraceAsString());
     }
 
     /**
@@ -123,4 +126,5 @@ class Handler
     {
         return $this->errorHash;
     }
+
 }

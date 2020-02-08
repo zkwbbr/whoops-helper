@@ -15,10 +15,11 @@ Put the ff. code on top of your script.
 ```php
 <?php
 
-error_reporting(E_ALL);
+\error_reporting(E_ALL);
 
 use Zkwbbr\WhoopsHelper;
 
+// the following constants are arbitrary and not required
 define('APP_DEV_MODE', true); // set to false in production
 define('APP_ADMIN_EMAIL', 'admin@example.com');
 define('APP_LOG_DIR', '/path/to/logs/');
@@ -35,7 +36,7 @@ $whoops = new \Whoops\Run;
 
 if (APP_DEV_MODE) {
 
-    ini_set('display_errors', '1');
+    \ini_set('display_errors', '1');
 
     $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
 
@@ -91,8 +92,8 @@ if (APP_DEV_MODE) {
         // send response to user/client
         // ----------------------------------------------
 
-        header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error');
-        header('Status: 500 Internal Server Error');
+        \header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error');
+        \header('Status: 500 Internal Server Error');
 
         echo 'Sorry an error occurred, our admins have been notified';
     });

@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2.1.0 - 2020-02-09
+
+### Changed
+
+- Make getErrorHash() method public in Handler class so external services can use it
+
 ## 2.0.1 - 2020-02-08
 
 ### Fixed

@@ -122,7 +122,7 @@ class Handler
      *
      * @return int
      */
-    private function getErrorHash(): int
+    public function getErrorHash(): int
     {
         return $this->errorHash;
     }

@@ -24,7 +24,7 @@ class HandlerTest extends TestCase
             . 'content of sample.env as template';
         }
 
-        $ex = new Exception;
+        $ex = new \Exception;
         $this->handler = new WhoopsHelper\Handler($ex, $this->logDir, 'UTC');
     }
 
@@ -38,6 +38,8 @@ class HandlerTest extends TestCase
 
     public function testInvokeActionOnEvent()
     {
+        $this->handler->process();
+
         // ----------------------------------------------
         // test pushover action
         // ----------------------------------------------
@@ -77,4 +79,30 @@ class HandlerTest extends TestCase
 
         $this->assertNull($this->handler->invokeActionOnEvent(WhoopsHelper\Handler::LOGGED_EVENT, $action));
     }
+
+    public function testRemoveServerVars()
+    {
+        $sensitiveItems = [
+            'ZWH_SMTP_PASS',
+            'ZWH_PUSHOVER_USER_KEY',
+        ];
+
+        $this->handler->setItemsToRemoveFromServerVar($sensitiveItems);
+
+        $this->handler->process();
+
+        // ------------------------------------------------
+        // make sure values of $sensitiveItems does not exist in the log content
+
+        $logFiles = \Zkwbbr\Utils\FilesFromDirectory::x($this->logDir);
+        $logContent = \file_get_contents($this->logDir . $logFiles[0]);
+
+        $counter = 0;
+        foreach ($sensitiveItems as $item)
+            if (false !== \strpos($logContent, $item))
+                $counter++;
+
+        $this->assertEquals(0, $counter);
+    }
+
 }

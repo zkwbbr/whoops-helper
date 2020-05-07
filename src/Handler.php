@@ -15,6 +15,7 @@ class Handler
     private $adjustedDateTime;
     private $events = [];
     private $nowDateTime;
+    private $itemsToRemoveFromServerVar;
 
     const LOGGED_EVENT = 1;
 
@@ -25,7 +26,15 @@ class Handler
         $this->logTimeZone = $logTimeZone;
         $this->nowDateTime = \date('Y-m-d H:i:s', \time());
         $this->adjustedDateTime = Utils\AdjustedDateTimeByTimeZone::x($this->nowDateTime, $this->logTimeZone, 'Y-m-d H:i:s O');
+    }
 
+    /**
+     * Process the error
+     *
+     * @return void
+     */
+    public function process(): void
+    {
         $this->setErrorHash();
 
         if ($this->isNewError()) {
@@ -100,7 +109,9 @@ class Handler
             '--------------------------------------------------' . "\r\n\r\n" .
             '$_SERVER:' . "\r\n\r\n";
 
-        foreach ($_SERVER as $k => $v)
+        $serverVars = $this->getSanitizedServerVar();
+
+        foreach ($serverVars as $k => $v)
             if (!\is_array($v))
                 $msg .= $k . ' = ' . $v . "\r\n";
 
@@ -125,6 +136,37 @@ class Handler
     public function getErrorHash(): int
     {
         return $this->errorHash;
+    }
+
+    /**
+     * Set items to remove from $_SERVER var
+     *
+     * Use this if you don't want to log sensitive info that may be present in the $_SERVER var
+     *
+     * @param array $items
+     * @return void
+     */
+    public function setItemsToRemoveFromServerVar(array $items): void
+    {
+        $this->itemsToRemoveFromServerVar = $items;
+    }
+
+    /**
+     * Get sanitized server var
+     *
+     * Only useful if client used $this->setItemsToRemoveFromServerVar();
+     *
+     * @return array
+     */
+    private function getSanitizedServerVar(): array
+    {
+        $serverVars = $_SERVER;
+
+        if (isset($this->itemsToRemoveFromServerVar) AND \count($this->itemsToRemoveFromServerVar) > 0)
+            foreach ($this->itemsToRemoveFromServerVar as $item)
+                unset($serverVars[$item]);
+
+        return $serverVars;
     }
 
 }

@@ -48,6 +48,12 @@ if (APP_DEV_MODE) {
 
         $handler = new WhoopsHelper\Handler($ex, APP_LOG_DIR, 'UTC');
 
+        // optionally remove sensitive info from $_SERVER var in the log
+        $sampleSensitiveInfo = ['PHP_AUTH_PW'];
+        $handler->setItemsToRemoveFromServerVar($sampleSensitiveInfo);
+
+        $handler->process();
+
         // ----------------------------------------------
         // optionally send email on first instance of an error
         // ----------------------------------------------

@@ -17,13 +17,13 @@
     },
     "require": {
         "php": ">=7.1",
-        "zkwbbr/utils": "^1.0",
-        "filp/whoops": "^2.3",
-        "php-pushover/php-pushover": "^1",
-        "metarush/email-fallback": "^4"
+        "zkwbbr/utils": "^1.0 || ^2.0",
+        "filp/whoops": "^2.0",
+        "php-pushover/php-pushover": "^1.0",
+        "metarush/email-fallback": "^4.0"
     },
     "require-dev": {
-        "vlucas/phpdotenv": "^3",
-        "phpunit/phpunit": "^8"
+        "vlucas/phpdotenv": "^3.0",
+        "phpunit/phpunit": "^9.0"
     }
 }

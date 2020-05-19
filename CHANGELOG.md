@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 3.0.1 - 2020-05-19
+
+### Fixed
+
+- Update dependency from package `zkwbbr/utils` from `^1.0` to `^1.0 || ^2.0`
+
 ## 3.0.0 - 2020-05-08
 
 ### Added

@@ -62,6 +62,7 @@ if (APP_DEV_MODE) {
         // ----------------------------------------------
         // optionally send email on first instance of an error
         // ----------------------------------------------
+
         $smtpServers = [
             0 => (new \MetaRush\EmailFallback\Server)
                 ->setHost(APP_SMTP_HOST)
@@ -122,9 +123,9 @@ You can use any PDO database (e.g., MySQL, PostgreSQL, SQLite)
 
 Create a table with the ff. columns:
 
-`dateTime` DATETIME
-`hash` VARCHAR (10)
-`message` TEXT (length depends on how big your log message is)
+- `createdOn` DATETIME
+- `hash` VARCHAR (10)
+- `message` TEXT (length depends on how big your log message is)
 
 Make `hash` column UNIQUE if you want
 

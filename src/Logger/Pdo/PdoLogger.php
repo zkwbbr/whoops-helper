@@ -24,7 +24,7 @@ class PdoLogger implements LoggerInterface
     public function log(string $hash, string $message): void
     {
         $data = [
-            'dateTime' => AdjustedDateTimeByTimeZone::x('now', $this->timeZone, 'Y-m-d_H-i-s_O'),
+            'createdOn' => AdjustedDateTimeByTimeZone::x('now', $this->timeZone, 'Y-m-d H:i:s'),
             'hash'     => $hash,
             'message'  => $message,
         ];

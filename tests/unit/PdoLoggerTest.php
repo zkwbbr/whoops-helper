@@ -45,7 +45,7 @@ class PdoLoggerTest extends TestCase
             $this->pdo->query('
                 CREATE TABLE test (
                 `id`        INTEGER PRIMARY KEY AUTOINCREMENT,
-                `dateTime`	TEXT,
+                `createdOn`	TEXT,
                 `hash`	    TEXT,
                 `message`   TEXT
             )');
@@ -106,7 +106,7 @@ class PdoLoggerTest extends TestCase
         // warning: the exact line position of the "new \Exception" line in this method is related
         // to the hash that we'll seed, so don't move it, in case you do, you must edit the hash value
         $data = [
-            'dateTime' => \date('Y-m-d H:i:s'),
+            'createdOn' => \date('Y-m-d H:i:s'),
             'hash'     => '450230634',
             'message'  => 'test'
         ];

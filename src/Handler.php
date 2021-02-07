@@ -98,7 +98,7 @@ class Handler
      *
      * @return int
      */
-    private function getMessageHash(): string
+    public function getMessageHash(): string
     {
         return (string) \crc32($this->ex->getMessage() . $this->ex->getFile() . $this->ex->getLine() . $this->ex->getTraceAsString());
     }

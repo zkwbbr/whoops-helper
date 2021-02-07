@@ -1,11 +1,17 @@
 # CHANGELOG
 
+## 4.0.2 - 2021-02-08
+
+### Fixed
+
+- Change visibility of getMessageHash() method to public in Handler class so external clients can use it
+
 ## 4.0.1 - 2021-02-08
 
 ### Fixed
 
-- Change date format of PDO logger to Y-m-d H:i:s
-- Use createdOn as column name in PDO logger
+- Change date format of PDO logger to Y-m-d H:i:s.
+- Use createdOn as column name in PDO logger.
 
 ## 4.0.0 - 2021-02-08
 

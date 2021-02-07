@@ -1,10 +1,20 @@
 # CHANGELOG
 
+## 4.0.0 - 2021-02-08
+
+### Added
+
+- Add PDO logger.
+
+### Changed
+
+- Param 2 of Handler constructor now requires LoggerInterface.
+
 ## 3.0.1 - 2020-05-19
 
 ### Fixed
 
-- Update dependency from package `zkwbbr/utils` from `^1.0` to `^1.0 || ^2.0`
+- Update dependency from package `zkwbbr/utils` from `^1.0` to `^1.0 || ^2.0`.
 
 ## 3.0.0 - 2020-05-08
 

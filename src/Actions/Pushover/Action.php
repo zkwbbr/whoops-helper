@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Zkwbbr\WhoopsHelper\Actions\Pushover;
 
+use Zkwbbr\WhoopsHelper\Actions\ActionInterface;
+
 /**
  * Send error to a Pushover account
  */
-class Action implements \Zkwbbr\WhoopsHelper\Actions\ActionInterface
+class Action implements ActionInterface
 {
     private $siteUrl;
     private $pushoverAppKey;
@@ -34,4 +36,5 @@ class Action implements \Zkwbbr\WhoopsHelper\Actions\ActionInterface
         if (!$push->send())
             throw new \Error('Pushover notification appears to be not working');
     }
+
 }

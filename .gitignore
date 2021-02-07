@@ -10,3 +10,4 @@ nbproject/
 .env
 error_log
 tests/mycoverage
+.db

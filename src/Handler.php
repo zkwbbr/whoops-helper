@@ -4,42 +4,42 @@ declare(strict_types=1);
 
 namespace Zkwbbr\WhoopsHelper;
 
-use Zkwbbr\Utils;
+use Zkwbbr\WhoopsHelper\Logger\LoggerInterface;
+use Zkwbbr\WhoopsHelper\Actions\ActionInterface;
+use Zkwbbr\Utils\AdjustedDateTimeByTimeZone;
 
 class Handler
 {
-    private $ex;
-    private $logDir; // must have trailing slash
-    private $logTimeZone;
-    private $errorHash;
-    private $adjustedDateTime;
-    private $events = [];
-    private $nowDateTime;
-    private $itemsToRemoveFromServerVar;
+    public const LOGGED_EVENT = 1;
 
-    const LOGGED_EVENT = 1;
+    private \Exception $ex;
+    private LoggerInterface $logger;
+    private string $logTimeZone;
+    private string $adjustedDateTime;
+    private array $events = [];
+    private array $itemsToRemoveFromServerVar;
 
-    public function __construct(object $ex, string $logDir, string $logTimeZone)
+    public function __construct(
+        \Exception $ex,
+        LoggerInterface $logger,
+        string $logTimeZone)
     {
         $this->ex = $ex;
-        $this->logDir = $logDir;
+        $this->logger = $logger;
         $this->logTimeZone = $logTimeZone;
-        $this->nowDateTime = \date('Y-m-d H:i:s', \time());
-        $this->adjustedDateTime = Utils\AdjustedDateTimeByTimeZone::x($this->nowDateTime, $this->logTimeZone, 'Y-m-d H:i:s O');
+        $this->adjustedDateTime = AdjustedDateTimeByTimeZone::x('now', $this->logTimeZone, 'Y-m-d H:i:s O');
     }
 
     /**
-     * Process the error
+     * Process the log
      *
      * @return void
      */
     public function process(): void
     {
-        $this->setErrorHash();
+        if (!$this->logger->logExist($this->getMessageHash())) {
 
-        if ($this->isNewError()) {
-
-            $this->log($this->getErrorMessage());
+            $this->logger->log($this->getMessageHash(), $this->getMessage());
 
             $this->addEvent(self::LOGGED_EVENT);
         }
@@ -60,47 +60,22 @@ class Handler
      * Invoke an action based on event
      *
      * @param int $event
-     * @param \Zkwbbr\WhoopsHelper\Actions\ActionInterface $callback
+     * @param ActionInterface $action
      * @return void
      */
-    public function invokeActionOnEvent(int $event, Actions\ActionInterface $action): void
+    public function invokeActionOnEvent(int $event, ActionInterface $action): void
     {
         foreach ($this->events as $v)
             if ($v == $event)
-                $action->callback($this->ex, $this->getErrorHash(), $this->adjustedDateTime);
+                $action->callback($this->ex, $this->getMessageHash(), $this->adjustedDateTime);
     }
 
     /**
-     * Log error message
-     *
-     * @param string $message
-     * @return void
-     */
-    private function log(string $message): void
-    {
-        $filename = Utils\AdjustedDateTimeByTimeZone::x($this->nowDateTime, $this->logTimeZone, 'Y-m-d_H-i-s_O') . '__' . $this->getErrorHash() . '.log';
-
-        \file_put_contents($this->logDir . $filename, $message);
-    }
-
-    /**
-     * Check if error message is already logged
-     *
-     * @return bool
-     */
-    private function isNewError(): bool
-    {
-        $errors = Utils\FilesFromDirectory::x($this->logDir, '~.*__' . $this->getErrorHash() . '\.log~');
-
-        return $errors ? false : true;
-    }
-
-    /**
-     * Get current error message
+     * Get current message
      *
      * @return string
      */
-    private function getErrorMessage(): string
+    private function getMessage(): string
     {
         $msg = '[' . $this->adjustedDateTime . '] ' . $this->ex->getMessage() . ' on ' . $this->ex->getFile() . ' (' . $this->ex->getLine() . ')' . "\r\n\r\n" .
             '--------------------------------------------------' . "\r\n\r\n" .
@@ -119,23 +94,13 @@ class Handler
     }
 
     /**
-     * Set error hash
-     *
-     * @return void
-     */
-    private function setErrorHash(): void
-    {
-        $this->errorHash = \crc32($this->ex->getMessage() . $this->ex->getFile() . $this->ex->getLine() . $this->ex->getTraceAsString());
-    }
-
-    /**
-     * Get error hash
+     * Get message hash
      *
      * @return int
      */
-    public function getErrorHash(): int
+    private function getMessageHash(): string
     {
-        return $this->errorHash;
+        return (string) \crc32($this->ex->getMessage() . $this->ex->getFile() . $this->ex->getLine() . $this->ex->getTraceAsString());
     }
 
     /**

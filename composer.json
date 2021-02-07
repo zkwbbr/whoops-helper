@@ -1,7 +1,7 @@
 {
     "name": "zkwbbr/whoops-helper",
     "type": "library",
-    "description": "Log and notify admin (via email or push notification) about an error only once.",
+    "description": "Log error once and notify admin (via email or push notification)",
     "keywords": ["php", "whoops", "error handling", "error", "pushover", "push notification", "email"],
     "license": "MIT",
     "authors": [
@@ -16,11 +16,12 @@
         }
     },
     "require": {
-        "php": ">=7.1",
+        "php": ">=7.4",
         "zkwbbr/utils": "^1.0 || ^2.0",
+        "metarush/email-fallback": "^4.0",
+        "metarush/data-mapper": "^1.0",
         "filp/whoops": "^2.0",
-        "php-pushover/php-pushover": "^1.0",
-        "metarush/email-fallback": "^4.0"
+        "php-pushover/php-pushover": "^1.0"
     },
     "require-dev": {
         "vlucas/phpdotenv": "^3.0",

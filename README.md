@@ -10,6 +10,8 @@ Install via composer as `zkwbbr/whoops-helper`
 
 ## Sample Usage
 
+### Using FileSystem logger
+
 Put the ff. code on top of your script.
 
 ```php
@@ -23,6 +25,7 @@ use Zkwbbr\WhoopsHelper;
 define('APP_DEV_MODE', true); // set to false in production
 define('APP_ADMIN_EMAIL', 'admin@example.com');
 define('APP_LOG_DIR', '/path/to/logs/');
+define('APP_LOG_TIME_ZONE', 'UTC');
 define('APP_URL', 'example.com');
 define('APP_SMTP_HOST', 'example.com');
 define('APP_SMTP_USER', 'user');
@@ -46,7 +49,9 @@ if (APP_DEV_MODE) {
 
     $whoops->pushHandler(function ($ex) {
 
-        $handler = new WhoopsHelper\Handler($ex, APP_LOG_DIR, 'UTC');
+        $logger = new WhoopsHelper\Logger\Filesystem\FileSytemLogger(APP_LOG_DIR, APP_LOG_TIME_ZONE);
+
+        $handler = new WhoopsHelper\Handler($ex, $logger, APP_LOG_TIME_ZONE);
 
         // optionally remove sensitive info from $_SERVER var in the log
         $sampleSensitiveInfo = ['PHP_AUTH_PW'];
@@ -108,4 +113,30 @@ if (APP_DEV_MODE) {
 $whoops->register();
 ```
 
-Note: Using email and Pushover notifications are optional. Just remove them from the sample code above.
+Note: Using email and Pushover notifications are optional.
+You can just remove them from the sample code above if you don't want to use them.
+
+### Using PDO logger
+
+You can use any PDO database (e.g., MySQL, PostgreSQL, SQLite)
+
+Create a table with the ff. columns:
+
+`dateTime` DATETIME
+`hash` VARCHAR (10)
+`message` TEXT (length depends on how big your log message is)
+
+Make `hash` column UNIQUE if you want
+
+Replace the $logger adapter (line 52 from the above sample) with the ff.
+
+```php
+
+$dataMapper = (new \MetaRush\DataMapper\DataMapper)
+    ->setDsn('mysql:host=locolhost;dbname=you_db_name')
+    ->setDbUser('your_db_user')
+    ->setDbPass('your_db_pass')
+    ->build();
+
+$logger = new WhoopsHelper\Logger\Pdo\PdoLogger($dataMapper, 'your_db_table', APP_LOG_TIME_ZONE);
+```

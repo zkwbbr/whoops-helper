@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use Zkwbbr\WhoopsHelper;
+use Zkwbbr\WhoopsHelper\Handler;
+use Zkwbbr\WhoopsHelper\Logger\Filesystem\FileSytemLogger;
+use Zkwbbr\Utils\FilesFromDirectory;
 
-class HandlerTest extends TestCase
+class FileSystemLoggerTest extends TestCase
 {
-    private $logDir = __DIR__ . '/testDir/';
-    private $handler;
+    private string $logDir = __DIR__ . '/testDir/';
+    private Handler $handler;
 
     public function setUp(): void
     {
@@ -24,13 +27,14 @@ class HandlerTest extends TestCase
             . 'content of sample.env as template';
         }
 
-        $ex = new \Exception;
-        $this->handler = new WhoopsHelper\Handler($ex, $this->logDir, 'UTC');
+        $ex = new \Exception('test error');
+        $logger = new FileSytemLogger($this->logDir, 'UTC');
+        $this->handler = new Handler($ex, $logger, 'UTC');
     }
 
     public function tearDown(): void
     {
-        $logs = \Zkwbbr\Utils\FilesFromDirectory::x($this->logDir);
+        $logs = FilesFromDirectory::x($this->logDir);
 
         foreach ($logs as $log)
             \unlink($this->logDir . $log);
@@ -50,7 +54,7 @@ class HandlerTest extends TestCase
             $_ENV['ZWH_PUSHOVER_USER_KEY']
         );
 
-        $this->assertNull($this->handler->invokeActionOnEvent(WhoopsHelper\Handler::LOGGED_EVENT, $action));
+        $this->assertNull($this->handler->invokeActionOnEvent(Handler::LOGGED_EVENT, $action));
 
         // ----------------------------------------------
         // test email action
@@ -77,7 +81,7 @@ class HandlerTest extends TestCase
             $mailBuilder
         );
 
-        $this->assertNull($this->handler->invokeActionOnEvent(WhoopsHelper\Handler::LOGGED_EVENT, $action));
+        $this->assertNull($this->handler->invokeActionOnEvent(Handler::LOGGED_EVENT, $action));
     }
 
     public function testRemoveServerVars()
@@ -92,9 +96,10 @@ class HandlerTest extends TestCase
         $this->handler->process();
 
         // ------------------------------------------------
-        // make sure values of $sensitiveItems does not exist in the log content
 
-        $logFiles = \Zkwbbr\Utils\FilesFromDirectory::x($this->logDir);
+        /* make sure values of $sensitiveItems does not exist in the log content */
+
+        $logFiles = FilesFromDirectory::x($this->logDir);
         $logContent = \file_get_contents($this->logDir . $logFiles[0]);
 
         $counter = 0;
